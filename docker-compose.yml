@@ -1,0 +1,25 @@
+version: '3'
+services:
+  elk:
+    container_name: cf-elk
+    image: sebp/elk
+    volumes:
+      - "./scripts:/scripts"
+      - "./conf:/etc/logstash/conf.d"
+      - "./data/es-data:/var/lib/elasticsearch"
+      - "./data/logstash-logs:/logstash-logs"
+    ports:
+      - "5601:5601"
+      - "5044:5044"
+      - "9200:9200"
+    command:
+      bash -c "/scripts/pre-start.sh"
+    environment:
+      CF_EMAIL: "xxxxxxxxxx"
+      CF_API_KEY: "xxxxxxxxxx"
+      CF_ZONES: "xxxxxxxxxx,yyyyyyyyyy,zzzzzzzzzz"
+      CF_FIELDS: "CacheCacheStatus,ClientRequestHost,ClientRequestURI,CacheResponseStatus,EdgeResponseStatus,OriginResponseStatus,EdgeStartTimestamp,ClientIP,ClientRequestBytes,CacheResponseBytes,EdgeResponseBytes,ClientRequestMethod,ZoneID,ClientRequestProtocol,ClientRequestUserAgent"
+      CF_LOGS_FETCH_SCHEDULE: "*/5 * * * *"
+      CF_LOGS_FETCH_MIN: "5"
+      ES_CLEAN_INDICES_SCHEDULE: "0 0 * * *"
+      ES_INDEX_RETENTION_DAYS: "10"
